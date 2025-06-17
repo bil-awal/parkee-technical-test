@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: parking-pos-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: parking_pos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking-pos-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Database
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/parking_pos?schema=public"
+      
+      # Next.js
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      
+      # Add your custom environment variables here
+      # NEXTAUTH_SECRET: your-secret-key
+      # NEXTAUTH_URL: http://localhost:3000
+      # API keys, etc.
+      
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount prisma directory for migrations (optional, for development)
+      - ./prisma:/app/prisma
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        npx prisma db seed 2>/dev/null || echo 'No seed script found' &&
+        npm start
+      "
+
+  # Optional: Prisma Studio for database management
+  prisma-studio:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking-pos-prisma-studio
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/parking_pos?schema=public"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npx prisma studio --hostname 0.0.0.0
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: parking-pos-network
