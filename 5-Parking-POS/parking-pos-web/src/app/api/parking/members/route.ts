@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { generateMemberCode } from '@/lib/utils'
+import type { Prisma } from '@prisma/client'
+
+// Define the type for member with included vehicles
+type MemberWithVehicles = Prisma.MemberGetPayload<{
+  include: { vehicles: true }
+}>
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +45,7 @@ export async function GET(request: NextRequest) {
       prisma.member.count({ where }),
     ])
 
-    const formattedMembers = members.map((member) => ({
+    const formattedMembers = members.map((member: MemberWithVehicles) => ({
       memberId: member.id,
       memberCode: member.memberCode,
       name: member.name,

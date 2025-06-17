@@ -40,19 +40,62 @@ const loginSchema = z.object({
   email: z.string().email("Email tidak valid"),
   password: z.string().min(6, "Password minimal 6 karakter"),
   gate: z.string().min(1, "Gate wajib dipilih"),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean(),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
 
-const gates = [
+interface Gate {
+  value: string
+  label: string
+  status: "active" | "maintenance"
+  vehicles: number
+}
+
+interface Feature {
+  icon: React.ElementType
+  title: string
+  description: string
+}
+
+interface MockUser {
+  email: string
+  password: string
+  name: string
+  role: string
+}
+
+interface FormFieldProps {
+  label: string
+  id: string
+  type?: string
+  placeholder: string
+  icon: React.ElementType
+  error?: string
+  register: any
+  className?: string
+  [key: string]: unknown
+}
+
+interface GateSelectorProps {
+  value: string
+  onValueChange: (value: string) => void
+  error?: string
+}
+
+interface FeatureCardProps {
+  feature: Feature
+  index: number
+}
+
+const gates: Gate[] = [
   { value: "GATE_A", label: "Gate A - Masuk Utama", status: "active", vehicles: 12 },
   { value: "GATE_B", label: "Gate B - Masuk Selatan", status: "active", vehicles: 8 },
   { value: "GATE_C", label: "Gate C - Keluar Utama", status: "active", vehicles: 15 },
   { value: "GATE_D", label: "Gate D - Keluar Selatan", status: "maintenance", vehicles: 0 },
 ]
 
-const features = [
+const features: Feature[] = [
   {
     icon: BarChart3,
     title: "Real-time Analytics",
@@ -80,17 +123,7 @@ const FormField = ({
   register,
   className,
   ...props
-}: {
-  label: string
-  id: string
-  type?: string
-  placeholder: string
-  icon: React.ElementType
-  error?: string
-  register: any
-  className?: string
-  [key: string]: any
-}) => (
+}: FormFieldProps) => (
   <div className="space-y-2">
     <Label htmlFor={id} className="text-base font-medium text-gray-700">
       {label}
@@ -130,11 +163,7 @@ const GateSelector = ({
   value,
   onValueChange,
   error,
-}: {
-  value: string
-  onValueChange: (value: string) => void
-  error?: string
-}) => (
+}: GateSelectorProps) => (
   <div className="space-y-2">
     <Label className="text-base font-medium text-gray-700">Gate Operasional</Label>
     <div className="relative">
@@ -179,7 +208,7 @@ const GateSelector = ({
   </div>
 )
 
-const FeatureCard = ({ feature, index }: { feature: any; index: number }) => (
+const FeatureCard = ({ feature, index }: FeatureCardProps) => (
   <div
     className="flex items-center gap-4 p-4 bg-white/50 rounded-2xl border border-gray-200/50 hover:bg-white/80 transition-all duration-300"
     style={{ animationDelay: `${index * 100}ms` }}
@@ -206,9 +235,8 @@ export default function LoginPage() {
   const { setUser, setGate } = useAuthStore()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  // FIX: Initialize currentTime as null to prevent hydration mismatch
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
-  const [mockUsers, setMockUsers] = useState<any[]>([])
+  const [mockUsers, setMockUsers] = useState<MockUser[]>([])
   const [loadingMockUsers, setLoadingMockUsers] = useState(false)
 
   const {
@@ -227,10 +255,7 @@ export default function LoginPage() {
   })
 
   const selectedGate = watch("gate")
-  const email = watch("email")
-  const password = watch("password")
 
-  // FIX: Set initial time only on client-side and update every second
   useEffect(() => {
     // Set initial time when component mounts on client
     setCurrentTime(new Date())
@@ -288,15 +313,16 @@ export default function LoginPage() {
       } else {
         throw new Error(response.message || "Login gagal")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login error:", error)
-      toast.error(error.message || "Login gagal. Periksa email dan password Anda.")
+      const errorMessage = error instanceof Error ? error.message : "Login gagal. Periksa email dan password Anda."
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const fillMockUser = (user: any) => {
+  const fillMockUser = (user: MockUser) => {
     setValue("email", user.email)
     setValue("password", user.password)
     toast.info(`Form diisi dengan data: ${user.name}`)

@@ -3,11 +3,12 @@ import { prisma } from '@/lib/db'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const member = await prisma.member.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       include: {
         vehicles: true,
       },
@@ -17,7 +18,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          message: `Member dengan ID ${params.id} tidak ditemukan`,
+          message: `Member dengan ID ${id} tidak ditemukan`,
           data: null,
         },
         { status: 404 }
@@ -37,7 +38,7 @@ export async function GET(
         memberType: member.memberType,
         isActive: member.isActive,
         joinDate: member.joinDate,
-        plateNumbers: member.vehicles.map((v) => v.plateNumber),
+        plateNumbers: member.vehicles.map((v: any) => v.plateNumber),
       },
     })
   } catch (error) {
@@ -55,21 +56,22 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await request.json()
     const { name, email, phoneNumber } = body
 
     const member = await prisma.member.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
     })
 
     if (!member) {
       return NextResponse.json(
         {
           success: false,
-          message: `Member dengan ID ${params.id} tidak ditemukan`,
+          message: `Member dengan ID ${id} tidak ditemukan`,
           data: null,
         },
         { status: 404 }
@@ -95,7 +97,7 @@ export async function PUT(
 
     // Update member
     const updated = await prisma.member.update({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       data: {
         ...(name && { name }),
         ...(email && { email }),
@@ -118,7 +120,7 @@ export async function PUT(
         balance: Number(updated.balance),
         memberType: updated.memberType,
         isActive: updated.isActive,
-        plateNumbers: updated.vehicles.map((v) => v.plateNumber),
+        plateNumbers: updated.vehicles.map((v: any) => v.plateNumber),
       },
     })
   } catch (error) {
@@ -136,18 +138,19 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const member = await prisma.member.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
     })
 
     if (!member) {
       return NextResponse.json(
         {
           success: false,
-          message: `Member dengan ID ${params.id} tidak ditemukan`,
+          message: `Member dengan ID ${id} tidak ditemukan`,
           data: null,
         },
         { status: 404 }
@@ -156,7 +159,7 @@ export async function DELETE(
 
     // Soft delete
     await prisma.member.update({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       data: {
         isActive: false,
       },
@@ -179,4 +182,3 @@ export async function DELETE(
     )
   }
 }
-

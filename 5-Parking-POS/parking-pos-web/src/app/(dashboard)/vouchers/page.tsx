@@ -71,8 +71,8 @@ interface Voucher {
   isValid: boolean
 }
 
-interface VouchersResponse {
-  content: Voucher[]
+interface PaginatedResponse<T> {
+  content: T[]
   totalElements: number
   totalPages: number
   number: number
@@ -80,6 +80,8 @@ interface VouchersResponse {
   first: boolean
   last: boolean
 }
+
+type VouchersResponse = PaginatedResponse<Voucher>
 
 interface ApiResponse<T> {
   success: boolean
@@ -164,7 +166,7 @@ const useVouchers = (activeOnly: boolean, page: number) => {
         activeOnly,
         page,
         size: DEFAULT_PAGE_SIZE,
-      }),
+      }) as Promise<ApiResponse<VouchersResponse>>,
     select: (data) => data,
   })
 }

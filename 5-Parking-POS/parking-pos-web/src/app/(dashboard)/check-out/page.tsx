@@ -395,13 +395,13 @@ const ReceiptModal = ({
   )
 }
 
-// Custom Hooks
 const useParkingStatus = (plateNumber: string, enabled: boolean) => {
   return useQuery<ApiResponse<ParkingStatusData>, Error>({
     queryKey: ["parking-status", plateNumber],
     queryFn: async () => {
       try {
-        return await apiClient.checkStatus(formatPlateNumber(plateNumber))
+        const response = await apiClient.checkStatus(formatPlateNumber(plateNumber))
+        return response as ApiResponse<ParkingStatusData>
       } catch (error: unknown) {
         const apiError = error as { response?: { data?: ApiErrorResponse } }
         if (apiError.response?.data?.errorCode === "RESOURCE_NOT_FOUND") {
@@ -429,7 +429,8 @@ const useFeeCalculation = (plateNumber: string, voucherCode: string, enabled: bo
     queryKey: ["calculate-fee", plateNumber, voucherCode],
     queryFn: async () => {
       try {
-        return await apiClient.calculateFee(formatPlateNumber(plateNumber), voucherCode || undefined)
+        const response = await apiClient.calculateFee(formatPlateNumber(plateNumber), voucherCode || undefined)
+        return response as ApiResponse<FeeCalculationData>
       } catch (error: unknown) {
         const apiError = error as { response?: { data?: ApiErrorResponse } }
         if (apiError.response?.data?.errorCode) {
@@ -481,7 +482,7 @@ const useCheckOut = () => {
       )
 
       try {
-        return await apiClient.checkOut(formData)
+        return await apiClient.checkOut(formData) as ApiResponse<CheckOutResponseData>
       } catch (error: unknown) {
         const apiError = error as { response?: { data?: ApiErrorResponse } }
         if (apiError.response?.data?.errorCode) {
@@ -493,7 +494,6 @@ const useCheckOut = () => {
   })
 }
 
-// Helper Functions
 const getErrorMessage = (error: Error): string => {
   const apiError = error as { response?: { data?: ApiErrorResponse } }
   if (apiError?.response?.data?.message) {

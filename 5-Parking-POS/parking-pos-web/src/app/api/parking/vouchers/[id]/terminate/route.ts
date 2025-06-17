@@ -3,11 +3,12 @@ import { prisma } from '@/lib/db'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const voucher = await prisma.voucher.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
     })
 
     if (!voucher) {
@@ -33,7 +34,7 @@ export async function POST(
     }
 
     const updated = await prisma.voucher.update({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
       data: {
         isActive: false,
         terminatedAt: new Date(),

@@ -4,12 +4,13 @@ import { calculateDuration, calculateParkingFee } from '@/lib/utils'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { plateNumber: string } }
+  { params }: { params: Promise<{ plateNumber: string }> }
 ) {
   try {
+    const { plateNumber } = await params
     const parking = await prisma.parkingTransaction.findFirst({
       where: {
-        plateNumber: params.plateNumber,
+        plateNumber: plateNumber,
         status: 'ACTIVE',
       },
     })
@@ -18,7 +19,7 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          message: `Kendaraan dengan plat nomor ${params.plateNumber} tidak sedang parkir`,
+          message: `Kendaraan dengan plat nomor ${plateNumber} tidak sedang parkir`,
           data: null,
         },
         { status: 404 }

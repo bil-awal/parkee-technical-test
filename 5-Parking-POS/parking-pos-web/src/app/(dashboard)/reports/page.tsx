@@ -785,11 +785,11 @@ export default function ReportsPage() {
     data: stats,
     isLoading: statsLoading,
     refetch: refetchStats,
-  } = useQuery<DashboardStats>({
+  } = useQuery({
     queryKey: ["dashboard-stats", dateRange],
-    queryFn: async () => {
+    queryFn: async (): Promise<DashboardStats> => {
       const res = await apiClient.getDashboardStats(dateRange.startDate, dateRange.endDate)
-      return res.data
+      return res.data as DashboardStats
     },
   })
 
@@ -797,9 +797,9 @@ export default function ReportsPage() {
     data: activities,
     isLoading: activitiesLoading,
     refetch: refetchActivities,
-  } = useQuery<ActivitiesData>({
+  } = useQuery({
     queryKey: ["vehicle-activities", vehicleFilters, page],
-    queryFn: async () => {
+    queryFn: async (): Promise<ActivitiesData> => {
       const params = {
         plateNumber: vehicleFilters.plateNumber || undefined,
         date: vehicleFilters.date,
@@ -809,7 +809,7 @@ export default function ReportsPage() {
       }
 
       const res = await apiClient.getVehicleActivities(params)
-      return res.data
+      return res.data as ActivitiesData
     },
   })
 

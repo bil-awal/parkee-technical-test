@@ -3,9 +3,10 @@ import { prisma } from '@/lib/db'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await request.json()
     const { amount } = body
 
@@ -21,14 +22,14 @@ export async function POST(
     }
 
     const member = await prisma.member.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: parseInt(id) },
     })
 
     if (!member) {
       return NextResponse.json(
         {
           success: false,
-          message: `Member dengan ID ${params.id} tidak ditemukan`,
+          message: `Member dengan ID ${id} tidak ditemukan`,
           data: null,
         },
         { status: 404 }
@@ -41,14 +42,14 @@ export async function POST(
     // Update balance and create transaction
     const [updatedMember, topUpTransaction] = await prisma.$transaction([
       prisma.member.update({
-        where: { id: parseInt(params.id) },
+        where: { id: parseInt(id) },
         data: {
           balance: currentBalance,
         },
       }),
       prisma.topUpTransaction.create({
         data: {
-          memberId: parseInt(params.id),
+          memberId: parseInt(id),
           amount,
           previousBalance,
           currentBalance,
@@ -82,4 +83,3 @@ export async function POST(
     )
   }
 }
-

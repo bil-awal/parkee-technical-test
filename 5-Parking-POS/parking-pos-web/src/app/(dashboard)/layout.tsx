@@ -30,6 +30,16 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
+// Type definitions
+interface ValidateTokenResponse {
+  success: boolean;
+  data: {
+    userId: string;
+    email: string;
+    role: string;
+  };
+}
+
 const navigationItems = [
   { name: "Dashboard", href: "/reports", icon: BarChart3, color: "indigo", description: "Analisis & Laporan" },
   { name: "Check-In", href: "/check-in", icon: LogIn, color: "green", description: "Kendaraan Masuk" },
@@ -392,7 +402,7 @@ const DashboardLayout: React.FC<{
         // If no user in store but token exists, validate token
         if (!user) {
           try {
-            const response = await apiClient.validateToken()
+            const response = await apiClient.validateToken() as ValidateTokenResponse
             if (response.success && response.data) {
               // Token valid but no user in store - restore user info
               setUser({

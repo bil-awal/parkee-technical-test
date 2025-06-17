@@ -36,6 +36,16 @@ import {
   AreaChart,
 } from 'recharts'
 
+// Type definition for dashboard stats
+interface DashboardStats {
+  totalVehicles: number
+  totalRevenue: number
+  averageDuration: string
+  activeParking: number
+  vehicleTypeBreakdown: Record<string, number>
+  paymentMethodBreakdown: Record<string, number>
+}
+
 const COLORS = ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE', '#5AC8FA']
 
 // Loading Skeleton Component
@@ -253,23 +263,32 @@ export default function DashboardPage() {
     queryFn: () => apiClient.getDashboardStats(),
   })
 
-  // Mock data for better visualization
-  const vehicleData = stats?.data ? Object.entries(stats.data.vehicleTypeBreakdown).map(([name, value]) => ({
-    name: name === 'MOBIL' ? 'Mobil' : 'Motor',
-    value,
-  })) : [
-    { name: 'Mobil', value: 145 },
-    { name: 'Motor', value: 89 }
-  ]
+  // Helper function to check if data is DashboardStats
+  const isDashboardStats = (data: any): data is DashboardStats => {
+    return data && typeof data === 'object' && 'vehicleTypeBreakdown' in data;
+  }
 
-  const paymentData = stats?.data ? Object.entries(stats.data.paymentMethodBreakdown).map(([name, value]) => ({
-    name,
-    value,
-  })) : [
-    { name: 'Tunai', value: 120 },
-    { name: 'QRIS', value: 85 },
-    { name: 'QRIS', value: 29 }
-  ]
+  // Mock data for better visualization with proper type checking
+  const vehicleData = isDashboardStats(stats?.data)
+    ? Object.entries(stats.data.vehicleTypeBreakdown).map(([name, value]) => ({
+        name: name === 'MOBIL' ? 'Mobil' : 'Motor',
+        value,
+      }))
+    : [
+        { name: 'Mobil', value: 145 },
+        { name: 'Motor', value: 89 }
+      ]
+
+  const paymentData = isDashboardStats(stats?.data)
+    ? Object.entries(stats.data.paymentMethodBreakdown).map(([name, value]) => ({
+        name,
+        value,
+      }))
+    : [
+        { name: 'Tunai', value: 120 },
+        { name: 'QRIS', value: 85 },
+        { name: 'E-Wallet', value: 29 }
+      ]
 
   const hourlyData = [
     { hour: '06:00', checkins: 12, checkouts: 8 },
@@ -301,6 +320,8 @@ export default function DashboardPage() {
     )
   }
 
+  const dashboardData = stats?.data as DashboardStats | undefined
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -315,7 +336,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Kendaraan"
-          value={stats?.data?.totalVehicles || 234}
+          value={dashboardData?.totalVehicles || 234}
           subtitle="Kendaraan hari ini"
           icon={Car}
           trend={{ value: 12, isPositive: true }}
@@ -325,7 +346,7 @@ export default function DashboardPage() {
         
         <StatCard
           title="Pendapatan"
-          value={formatCurrency(stats?.data?.totalRevenue || 2450000)}
+          value={formatCurrency(dashboardData?.totalRevenue || 2450000)}
           subtitle="Total pendapatan"
           icon={DollarSign}
           trend={{ value: 8, isPositive: true }}
@@ -335,7 +356,7 @@ export default function DashboardPage() {
         
         <StatCard
           title="Durasi Rata-rata"
-          value={stats?.data?.averageDuration || '2.5 jam'}
+          value={dashboardData?.averageDuration || '2.5 jam'}
           subtitle="Waktu parkir"
           icon={Clock}
           trend={{ value: 5, isPositive: false }}
@@ -345,7 +366,7 @@ export default function DashboardPage() {
         
         <StatCard
           title="Parkir Aktif"
-          value={stats?.data?.activeParking || 89}
+          value={dashboardData?.activeParking || 89}
           subtitle="Sedang parkir"
           icon={Activity}
           color="purple"

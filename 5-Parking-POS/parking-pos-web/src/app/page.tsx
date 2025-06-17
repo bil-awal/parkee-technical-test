@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, ReactNode, ButtonHTMLAttributes, HTMLAttributes } from "react"
 import {
   Car,
   Shield,
@@ -23,7 +23,13 @@ import {
   Heart,
 } from "lucide-react"
 
-function Button({ children, className = "", variant = "default", onClick, ...props }) {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+  className?: string;
+  variant?: "default" | "outline";
+}
+
+function Button({ children, className = "", variant = "default", onClick, ...props }: ButtonProps) {
   const baseClasses = "inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-all duration-200"
   const variants = {
     default: "bg-blue-600 hover:bg-blue-700 text-white",
@@ -41,7 +47,12 @@ function Button({ children, className = "", variant = "default", onClick, ...pro
   )
 }
 
-function Card({ children, className = "", ...props }) {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  className?: string;
+}
+
+function Card({ children, className = "", ...props }: CardProps) {
   return (
     <div className={`bg-white rounded-lg shadow-md border border-gray-200 ${className}`} {...props}>
       {children}
@@ -49,7 +60,7 @@ function Card({ children, className = "", ...props }) {
   )
 }
 
-function cn(...classes) {
+function cn(...classes: (string | boolean | undefined)[]): string {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -74,37 +85,37 @@ export default function HomePage() {
       icon: BarChart3,
       title: "Real-time Analytics",
       description: "Monitor operasional parkir secara real-time dengan dashboard komprehensif",
-      color: "blue",
+      color: "blue" as const,
     },
     {
       icon: Shield,
       title: "Keamanan Terjamin",
       description: "Sistem keamanan enterprise dengan enkripsi end-to-end",
-      color: "green",
+      color: "green" as const,
     },
     {
       icon: Zap,
       title: "Proses Cepat",
       description: "Check-in dan check-out dalam hitungan detik",
-      color: "purple",
+      color: "purple" as const,
     },
     {
       icon: Users,
       title: "Manajemen Member",
       description: "Kelola member dan voucher dengan mudah",
-      color: "orange",
+      color: "orange" as const,
     },
     {
       icon: Clock,
       title: "24/7 Operasional",
       description: "Sistem berjalan 24 jam tanpa henti",
-      color: "red",
+      color: "red" as const,
     },
     {
       icon: Target,
       title: "Efisiensi Tinggi",
       description: "Tingkatkan efisiensi operasional hingga 300%",
-      color: "indigo",
+      color: "indigo" as const,
     },
   ]
 
