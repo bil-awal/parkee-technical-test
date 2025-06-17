@@ -3,7 +3,7 @@
 ### Pertanyaan:
 Anda menemukan bahwa ada isu kritis yang mempengaruhi sistem production dan memerlukan koordinasi dengan tim support dan engineer. Jelaskan langkah-langkah yang akan Anda ambil untuk mengkoordinasikan penyelesaian masalah ini?
 
-### Jawaban:
+### **Jawaban**:
 
 Saya akan menggunakan **Incident Response Framework** yang praktis dan sesuai dengan business model **Parkee**:
 

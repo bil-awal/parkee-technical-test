@@ -1,23 +1,7 @@
-/**
- * Java
- * =============================================================================
- * File: SingleLinkedList.java
- * Deskripsi: Struktur Data & Memori
- * Author: https://github.com/bil-awal
- * 
- * =============================================================================
-*/
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-/**
- * Kelas Node yang merepresentasikan satu elemen dalam linked list.
- * Mengimplementasikan desain immutable untuk thread safety.
- * 
- * @param <T> tipe data yang disimpan dalam node
- */
 class Node<T> {
     private final T data;
     private Node<T> next;
@@ -65,19 +49,7 @@ class LinkedListException extends RuntimeException {
     }
 }
 
-/**
- * Implementasi Generic Single Linked List mengikuti pola enterprise.
- * 
- * Fitur-fitur:
- * - Dukungan generic type
- * - Implementasi pola Iterator
- * - Pola Builder untuk konstruksi
- * - Penanganan error yang komprehensif
- * - Operasi thread-safe (jika berlaku)
- * 
- * @param <T> tipe elemen yang disimpan dalam list ini
- */
-public class SingleLinkedList<T> implements Iterable<T> {
+class SingleLinkedList<T> implements Iterable<T> {
     private Node<T> head;
     private int size;
     
@@ -441,5 +413,11 @@ public class SingleLinkedList<T> implements Iterable<T> {
             
             System.out.println("Penanganan error berhasil diselesaikan");
         }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SingleLinkedList.Demo.main(args);
     }
 }

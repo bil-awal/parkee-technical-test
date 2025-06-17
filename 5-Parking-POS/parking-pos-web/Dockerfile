@@ -1,15 +1,17 @@
-# Use Node.js 22 Alpine for smaller image size
-FROM node:22-alpine AS base
+# Use Node.js 22 Slim for compatibility and smaller size
+FROM node:22-slim AS base
+
+# Install OpenSSL for Prisma
+RUN apt-get update -y && apt-get install -y openssl
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
 RUN \
-  if [ -f package-lock.json ]; then npm ci --omit=dev; \
+  if [ -f package-lock.json ]; then npm ci; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -22,8 +24,10 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Disable Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build the application
 RUN \
   if [ -f package-lock.json ]; then npm run build; \
   else echo "Lockfile not found." && exit 1; \
@@ -34,27 +38,29 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Create user and group
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy public assets
 COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy built application
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
 USER nextjs
 
 EXPOSE 3000
 
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD ["npm", "start"]
