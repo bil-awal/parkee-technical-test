@@ -10,8 +10,8 @@ spring:
   # Konfigurasi Database PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5434/parking_pos_db
-    username: postgres # PLEASE INSERT YOUR USERNAME DB
-    password: 120498 # PLEASE INSERT YOUR PASSWORD DB
+    username: USERNAME # PLEASE INSERT YOUR USERNAME DB
+    password: PASSWORD # PLEASE INSERT YOUR PASSWORD DB
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
