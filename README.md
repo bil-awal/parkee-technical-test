@@ -39,18 +39,21 @@ Anda diminta untuk mengimplementasikan Single Linked List di Java tanpa mengguna
     Buatlah sebuah shell script yang menerima dua parameter: direktori dan ekstensi file. Script ini harus mencari semua file dengan ekstensi yang diberikan di dalam direktori tersebut dan menampilkan daftar nama file yang ditemukan.
 
 - **Jawaban**: [1 - find_by_extension.sh](./2-Linux-Task/1_find_by_extension.sh)
+- **Hasil**: ![](./2-Linux-Task/1.png)
 
 2. **Automasi Pembaharuan Sistem (BASIC SYSTEM)**
 
     Buatlah sebuah shell script yang akan secara otomatis memperbaharui semua package di sistem menggunakan package manager yang sesuai dengan family linux (misal ‘apt’, ‘yum’ atau sebagainya). Script harus juga mencatat hasil dari setiap pembaruan kedalam sebuah file log.
 
 - **Jawaban**: [2 - system_update.sh](./2-Linux-Task/2_system_update.sh)
+- **Hasil**: ![](./2-Linux-Task/2.png)
 
 3. **Membuat dan Menyimpan SSH Key (SSH)**
 
     Buatlah sebuah shell script yang akan membuat sepasang SSH Key (public dan private) dengan menggunakan ssh-keygen dan menyimpannya di direktori yang ditentukan oleh pengguna sebagai parameter. Jika direktori tidak ada, script harus membuatnya terlebih dahulu.
 
 - **Jawaban**: [3 - ssh_key_generator.sh](./2-Linux-Task/3_ssh_key_generator.sh)
+- **Hasil**: ![](./2-Linux-Task/3.png)
 
 4. **Pengelolaan Service (SERVICE)**
 
@@ -59,6 +62,7 @@ Anda diminta untuk mengimplementasikan Single Linked List di Java tanpa mengguna
     tertentu di sistem. Script harus memiliki parameter untuk menentukan tindakan yang diinginkan (start, stop, status) dan nama service.
 
 - **Jawaban**: [4_service_manager.sh](./2-Linux-Task/4_service_manager.sh)
+- **Hasil**: ![](./2-Linux-Task/4.png)
 
 5. **Men-copy Direktori ke Server Remote (SCP)**
 
@@ -66,7 +70,19 @@ Anda diminta untuk mengimplementasikan Single Linked List di Java tanpa mengguna
 
 - **Jawaban**: 
 - [5a - remote_copy_scp.sh](./2-Linux-Task/5a_remote_copy_scp.sh)
+- **Hasil**: 
+![](./2-Linux-Task/5a-1.png)
+![](./2-Linux-Task/5a-2.png)
+
 - [5b - remote_copy_rsync.sh](./2-Linux-Task/5b_remote_copy_rsync.sh)
+- **Hasil**: 
+![](./2-Linux-Task/5b-1.png)
+![](./2-Linux-Task/5b-2.png)
+![](./2-Linux-Task/5b-3.png)
+![](./2-Linux-Task/5b-4.png)
+![](./2-Linux-Task/5b-5.png)
+![](./2-Linux-Task/5b-6.png)
+![](./2-Linux-Task/5b-7.png)
 
 ---
 

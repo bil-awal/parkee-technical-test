@@ -14,6 +14,7 @@ usage() {
     echo "  start   - Memulai service"
     echo "  stop    - Menghentikan service"
     echo "  status  - Memeriksa status service"
+    
     echo "  restart - Restart service"
     echo "  enable  - Enable service saat boot"
     echo "  disable - Disable service saat boot"
