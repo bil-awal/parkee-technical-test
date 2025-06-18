@@ -228,3 +228,7 @@ vehicles with the same vehicle plate number are unable to be in a parking area a
 - [Web Application - (Front-End)](./5-Parking-POS/parking-pos-web)
 - [Aplication Service - (Back-End)](./5-Parking-POS/parking-pos-service)
 - [Dump SQL - (Data Base)](./5-Parking-POS/parkee-pos-dump-parking_pos_db-202506171608.sql)
+
+**Hasil:**
+- Web App: https://parkee-web-3763bcd24d03.herokuapp.com
+- Open API: https://parkee-service-45beed2c9ede.herokuapp.com/api
